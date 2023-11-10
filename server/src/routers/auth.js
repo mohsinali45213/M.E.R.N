@@ -1,7 +1,5 @@
 import express from 'express'
 const router = new express.Router
-const app = express()
-
 
 router.get('/', (req, res) => {
   res.send('Home')
@@ -23,4 +21,5 @@ router.get('/signin', (req, res) => {
 router.get('/signup', (req, res) => {
   res.send('contactHome')
 })
-export {router}
+
+export default router
