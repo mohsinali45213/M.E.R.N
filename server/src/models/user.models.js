@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     type:String,
     require:true,
   },
-  conformPassword:{
+  cPassword:{
     type:String,
     require:true,
   },
