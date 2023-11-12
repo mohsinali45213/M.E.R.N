@@ -1,48 +1,69 @@
 import express from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 const router = new express.Router()
 import { User } from '../models/user.models.js'
 
+//Register
 router.post('/register', async (req, res) => {
   try {
     const { name, email, phone, work, password, cPassword } = req.body
 
     if (!name || !email || !phone || !work || !password || !cPassword) {
-      return res.status(422).json({ error: 'All filed are required' })
+      return res.status(400).json({ error: 'All filed are required' })
     }
     const userExist = await User.findOne({ email })
 
     if (userExist) {
-      return res.status(422).json({ error: 'Email already exist' })
+      return res.status(400).json({ error: 'Email already exist' })
+    } else if (password != cPassword) {
+      return res.status(400).json({ error: 'Password are not match' })
+    } else {
+      const user = new User({
+        name,
+        email,
+        phone,
+        work,
+        password,
+        cPassword,
+      })
+      await user.save()
+      res.send(user).status(201)
     }
-    const user = new User({
-      name,
-      email,
-      phone,
-      work,
-      password,
-      cPassword,
-    })
-    await user.save()
-    res.send(user).status(201)
   } catch (error) {
-    res.send({ error: 'User is not register' }).status(422)
+    res.send({ error: 'User is not register' }).status(400)
   }
 })
 
-router.post('/signin', async (req, res) => {
+//login
+router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
 
     if (!email || !password) {
-      return res.status(422).json({ error: 'Invalid login detail' })
+      return res.status(400).json({ error: 'Invalid login detail' })
     }
 
     const userLogin = await User.findOne({ email })
-    if (!userLogin) {
-      return res.status(422).json({ error: 'Invalid login detail' })
-    }
 
-    res.send(userLogin)
+    if (userLogin) {
+      const isMatch = await bcrypt.compare(password, userLogin.password)
+      //token
+      const token = await userLogin.generateAuthToken()
+
+      res.cookie('jwtoken', token, {
+        expires: new Date(Date.now() + 25892000000),
+        httpOnly: true,
+      })
+
+      if (!isMatch) {
+        res.status(400).json({ error: 'Invalid login detail' })
+      } else {
+        res.json({ Info: 'user Login successful...' })
+      }
+    } else {
+      res.status(400).json({ error: 'Invalid login detail' })
+    }
   } catch (error) {
     console.log(error)
   }

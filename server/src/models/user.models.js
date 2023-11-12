@@ -1,30 +1,65 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
-const userSchema = new mongoose.Schema({
-  name:{
-    type:String,
-    require:true,
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: Number,
+      required: true,
+    },
+    work: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    cPassword: {
+      type: String,
+      required: true,
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required:true
+        },
+      },
+    ],
   },
-  email:{
-    type:String,
-    require:true,
-  },
-  phone:{
-    type:Number,
-    require:true,
-  },
-  work:{
-    type:String,
-    require:true,
-  },
-  password:{
-    type:String,
-    require:true,
-  },
-  cPassword:{
-    type:String,
-    require:true,
-  },
-},{timestamps:true})
+  { timestamps: true }
+)
 
-export const User = new mongoose.model("User",userSchema)
+//password hashing
+userSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 12)
+    this.cPassword = await bcrypt.hash(this.cPassword, 12)
+    console.log(this.password)
+  }
+  next()
+})
+
+//token generating
+userSchema.methods.generateAuthToken = async function () {
+  try {
+    let token = jwt.sign({ _id: this._id }, process.env.SECRET_KEY)
+    this.tokens = this.tokens.concat({token})
+    await this.save()
+    return token
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+export const User = mongoose.model('User', userSchema)
