@@ -24,10 +24,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    cPassword: {
-      type: String,
-      required: true,
-    },
     tokens: [
       {
         token: {
@@ -44,8 +40,6 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12)
-    this.cPassword = await bcrypt.hash(this.cPassword, 12)
-    console.log(this.password)
   }
   next()
 })

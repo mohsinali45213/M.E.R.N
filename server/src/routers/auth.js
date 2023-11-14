@@ -8,7 +8,7 @@ import { User } from '../models/user.models.js'
 router.post('/register', async (req, res) => {
   try {
     const { name, email, phone, work, password, cPassword } = req.body
-
+    
     if (!name || !email || !phone || !work || !password || !cPassword) {
       return res.status(400).json({ error: 'All filed are required' })
     }
@@ -25,13 +25,12 @@ router.post('/register', async (req, res) => {
         phone,
         work,
         password,
-        cPassword,
       })
       await user.save()
-      res.send(user).status(201)
+      res.send({info:"User Is Register"}).status(201)
     }
   } catch (error) {
-    res.send({ error: 'User is not register' }).status(400)
+    res.send({ error: 'Server error'}).status(500)
   }
 })
 
