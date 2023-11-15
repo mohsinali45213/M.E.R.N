@@ -24,6 +24,26 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    massages:[
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        email: {
+          type: String,
+          required: true,
+        },
+        phone: {
+          type: Number,
+          required: true,
+        },
+        massage: {
+          type: String,
+          required: true,
+        },
+      }
+    ],
     tokens: [
       {
         token: {
@@ -53,6 +73,18 @@ userSchema.methods.generateAuthToken = async function () {
     return token
   } catch (error) {
     console.log(error)
+  }
+}
+
+//store the massage
+
+userSchema.methods.addMassage =async function(name,email,phone,massage){
+  try {
+    this.massages = this.massages.concat({name,email,phone,massage})
+    await this.save()
+    return this.massage
+  } catch (error) {
+    console.log(error);
   }
 }
 

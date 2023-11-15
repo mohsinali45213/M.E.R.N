@@ -9,6 +9,7 @@ import Contact from './components/Contact.jsx'
 import Login from './components/Login.jsx'
 import SignUp from './components/SignUp.jsx'
 import Error from './components/Error.jsx'
+import Logout from './components/Logout.jsx'
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path:"/register",
         element:<SignUp/>
+      },
+      {
+        path:"/logout",
+        element:<Logout/>
       },
       {
         path:'*',

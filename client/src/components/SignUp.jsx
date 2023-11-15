@@ -8,10 +8,10 @@ const SignUp = () => {
   }
 
   const postData = async (e) => {
+    e.preventDefault()
     if (user.password === user.cPassword) {
       try {
         const { name, email, phone, work, password, cPassword } = user
-        e.preventDefault()
         let result = await fetch('/api/register', {
           method: 'POST',
           headers: {

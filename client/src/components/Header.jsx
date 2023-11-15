@@ -20,6 +20,9 @@ const Header = () => {
         <li className="mr-8 font-semibold pb-1">
           <NavLink to="/register" className={({isActive})=>`${isActive?"text-orange-500 border-b-2 pb-1":""}`}>Register </NavLink>
         </li>
+        <li className="mr-8 font-semibold pb-1">
+          <NavLink to="/logout" className={({isActive})=>`${isActive?"text-orange-500 border-b-2 pb-1":""}`}>Logout </NavLink>
+        </li>
       </ul>
     </div>
   )
